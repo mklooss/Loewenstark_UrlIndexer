@@ -3,6 +3,7 @@
 class Loewenstark_UrlIndexer_Model_Url
 extends Mage_Catalog_Model_Url
 {
+    CONST XML_PATH_DISABLE_CATEGORIE = 'catalog/seo_product/use_categories';
     
     /**
      * Get requestPath that was not used yet.
@@ -30,6 +31,21 @@ extends Mage_Catalog_Model_Url
     public function getProductRequestPath($product, $category)
     {
         return parent::getProductRequestPath($product, $category);
+    }
+    
+    /**
+     * Refresh products for category
+     *
+     * @param Varien_Object $category
+     * @return Mage_Catalog_Model_Url
+     */
+    protected function _refreshCategoryProductRewrites(Varien_Object $category)
+    {
+        if(Mage::getStoreConfigFlag(self::XML_PATH_DISABLE_CATEGORIE, $category->getStoreId()))
+        {
+            return parent::_refreshCategoryProductRewrites($category);
+        }
+        return $this;
     }
     
     /**
