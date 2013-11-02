@@ -40,15 +40,14 @@ extends Mage_Catalog_Model_Resource_Url
         parent::saveRewrite($rewriteData, $rewrite);
         
         // check if is a category
-        if(isset($rewriteData['category_id']) && !empty($rewriteData['category_id'])
-         && isset($rewriteData['is_system']) && $rewriteData['is_system'] == 1
-         && isset($rewriteData['product_id']) && empty($rewriteData['product_id']))
+        if((isset($rewriteData['category_id']) && !empty($rewriteData['category_id']))
+         && isset($rewriteData['is_system']) && intval($rewriteData['is_system']) == 1
+         && ((isset($rewriteData['product_id']) && is_null($rewriteData['product_id']))
+             || !isset($rewriteData['product_id'])))
         {
-            var_dump(true);
-            exit;
             $adapter = $this->_getWriteAdapter();
             try {
-                $adapter->insertOnDuplicate($this->_getWriteAdapter()->getTableName('urlindexer/url_rewrite'), $rewriteData);
+                $adapter->insertOnDuplicate($this->getTable('urlindexer/url_rewrite'), $rewriteData);
             } catch (Exception $e) {
                 Mage::logException($e);
                 Mage::throwException(Mage::helper('urlindexer')->__('An error occurred while saving the URL rewrite in urlindexer'));

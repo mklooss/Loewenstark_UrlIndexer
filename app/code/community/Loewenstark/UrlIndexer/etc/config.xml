@@ -42,6 +42,11 @@
             <urlindexer>
                 <class>Loewenstark_UrlIndexer_Helper</class>
             </urlindexer>
+            <catalog>
+                <rewrite>
+                    <category_url_rewrite>Loewenstark_UrlIndexer_Helper_Category_Url_Rewrite</category_url_rewrite>
+                </rewrite>
+            </catalog>
         </helpers>
     </global>
 </config>
