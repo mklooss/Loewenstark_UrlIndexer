@@ -26,7 +26,7 @@ extends Mage_Catalog_Model_Url
     {
         $url = parent::getProductRequestPath($product, $category);
         $this->_urlKey = false;
-        if($this->_helper()->isEnabled() && $category->getLevel() > 1 && $product->getUrlKey() == '')
+        if($this->_helper()->isEnabled() && $product->getUrlKey() == '')
         {
             $suffix = $this->getProductUrlSuffix($category->getStoreId());
             $urlKey = basename($url, $suffix); // get current url key
