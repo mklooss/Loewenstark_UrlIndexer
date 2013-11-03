@@ -5,6 +5,9 @@ extends Mage_Catalog_Model_Url
 {
     CONST XML_PATH_DISABLE_CATEGORIE = 'catalog/seo_product/use_categories';
     
+    protected $_urlKey = false;
+
+
     /**
      * Get requestPath that was not used yet.
      *
@@ -30,7 +33,39 @@ extends Mage_Catalog_Model_Url
      */
     public function getProductRequestPath($product, $category)
     {
-        return parent::getProductRequestPath($product, $category);
+        $url = parent::getProductRequestPath($product, $category);
+        $this->_urlKey = false;
+        if($category->getLevel() > 1 && $product->getUrlKey() == '')
+        {
+            $suffix = $this->getProductUrlSuffix($category->getStoreId());
+            $urlKey = basename($url, $suffix); // get current url key
+            $this->_urlKey = $urlKey;
+            $product->setUrlKey($urlKey);
+            $this->getResource()->saveProductAttribute($product, 'url_key');
+        }
+        
+        return $url;
+    }
+    
+    /**
+     * Refresh product rewrite
+     *
+     * @param Varien_Object $product
+     * @param Varien_Object $category
+     * @return Mage_Catalog_Model_Url
+     */
+    protected function _refreshProductRewrite(Varien_Object $product, Varien_Object $category)
+    {
+        if ($category->getId() == $category->getPath()) {
+            return $this;
+        }
+        parent::_refreshProductRewrite($product, $category);
+        if($this->_urlKey && $this->_urlKey != $product->getUrlKey())
+        {
+            $product->setUrlKey($this->_urlKey);
+            $this->getResource()->saveProductAttribute($product, 'url_key');
+        }
+        return $this;
     }
     
     /**
