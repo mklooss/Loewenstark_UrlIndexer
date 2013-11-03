@@ -1,4 +1,15 @@
 <?xml version="1.0"?>
+<!--
+/**
+  * Loewenstark_UrlIndexer
+  *
+  * @category  Loewenstark
+  * @package   Loewenstark_UrlIndexer
+  * @author    Mathis Klooss <m.klooss@loewenstark.com>
+  * @copyright 2013 Loewenstark Web-Solution GmbH (http://www.mage-profis.de/). All rights served.
+  * @license   https://github.com/mklooss/Loewenstark_UrlIndexer/blob/master/README.md
+  */
+-->
 <config>
     <modules>
         <Loewenstark_UrlIndexer>
@@ -49,4 +60,15 @@
             </catalog>
         </helpers>
     </global>
+    <default>
+        <dev>
+            <index>
+                <enable>0</enable>
+                <disable_products>1</disable_products>
+                <notvisible_products>1</notvisible_products>
+                <disable_categories>0</disable_categories>
+                <optimize_categorie_leftjoin>0</optimize_categorie_leftjoin>
+            </index>
+        </dev>
+    </default>
 </config>

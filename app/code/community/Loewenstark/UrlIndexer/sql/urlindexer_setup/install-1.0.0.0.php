@@ -1,10 +1,18 @@
 <?php
-
+/**
+  * Loewenstark_UrlIndexer
+  *
+  * @category  Loewenstark
+  * @package   Loewenstark_UrlIndexer
+  * @author    Mathis Klooss <m.klooss@loewenstark.com>
+  * @copyright 2013 Loewenstark Web-Solution GmbH (http://www.loewenstark.de). All rights served.
+  * @license   https://github.com/mklooss/Loewenstark_UrlIndexer/blob/master/README.md
+  */
 $installer = $this;
 /* @var $installer Loewenstark_UrlIndexer_Model_Resource_Setup */
 $installer->startSetup();
 
-// set index/key main core_url_rewrite to perform left join
+// set index/key in core_url_rewrite to perform left join
 $installer->getConnection()
         ->addIndex(
                 $installer->getTable('core/url_rewrite'),

@@ -1,9 +1,24 @@
 <?xml version="1.0"?>
+<!--
+/**
+  * Loewenstark_UrlIndexer
+  *
+  * @category  Loewenstark
+  * @package   Loewenstark_UrlIndexer
+  * @author    Mathis Klooss <m.klooss@loewenstark.com>
+  * @copyright 2013 Loewenstark Web-Solution GmbH (http://www.mage-profis.de/). All rights served.
+  * @license   https://github.com/mklooss/Loewenstark_UrlIndexer/blob/master/README.md
+  */
+-->
 <config>
     <modules>
         <Loewenstark_UrlIndexer>
             <active>true</active>
             <codePool>community</codePool>
+            <conflicts>
+                <Dnd_Patchindexurl />
+                <EcomDev_UrlRewrite />
+            </conflicts>
         </Loewenstark_UrlIndexer>
     </modules>
 </config>

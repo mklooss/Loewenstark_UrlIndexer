@@ -1,12 +1,17 @@
 <?php
-
+/**
+  * Loewenstark_UrlIndexer
+  *
+  * @category  Loewenstark
+  * @package   Loewenstark_UrlIndexer
+  * @author    Mathis Klooss <m.klooss@loewenstark.com>
+  * @copyright 2013 Loewenstark Web-Solution GmbH (http://www.mage-profis.de/). All rights served.
+  * @license   https://github.com/mklooss/Loewenstark_UrlIndexer/blob/master/README.md
+  */
 class Loewenstark_UrlIndexer_Model_Resource_Url
 extends Mage_Catalog_Model_Resource_Url
 {
-    CONST XML_PATH_DISABLE_CATEGORIE = 'catalog/seo_product/use_categories';
-    CONST XML_PATH_DISABLED_PRODUCTS = '';
-
-/**
+    /**
      * Retrieve categories objects
      * Either $categoryIds or $path (with ending slash) must be specified
      *
@@ -17,7 +22,7 @@ extends Mage_Catalog_Model_Resource_Url
      */
     protected function _getCategories($categoryIds, $storeId = null, $path = null)
     {
-        if(Mage::getStoreConfigFlag(self::XML_PATH_DISABLED_PRODUCTS, $storeId))
+        if($this->_helper()->HideDisabledCategories($storeId))
         {
             $categories = parent::_getCategories($categoryIds, $storeId, $path);
             if($categories)
@@ -51,7 +56,7 @@ extends Mage_Catalog_Model_Resource_Url
      */
     protected function _getProducts($productIds, $storeId, $entityId, &$lastEntityId)
     {
-        if(Mage::getStoreConfigFlag(self::XML_PATH_DISABLED_PRODUCTS, $storeId))
+        if($this->_helper()->HideDisabledProducts($storeId) || $this->_helper()->HideNotVisibileProducts($storeId))
         {
             $hasIds = false;
             if($productIds !== null)
@@ -70,7 +75,7 @@ extends Mage_Catalog_Model_Resource_Url
     }
     
     /**
-     * check if products can disable
+     * check if products can be disabled
      * 
      * @param array $productIds
      * @param int $storeId
@@ -79,7 +84,16 @@ extends Mage_Catalog_Model_Resource_Url
      */
     protected function _checkProducts(&$productIds, $storeId, $use_id=true)
     {
-        foreach (array('status', 'visibility') as $attributeCode) {
+        $_attributes = array();
+        if($this->_helper()->HideDisabledProducts($storeId))
+        {
+            $_attributes[] = 'status';
+        }
+        if($this->_helper()->HideNotVisibileProducts($storeId))
+        {
+            $_attributes[] = 'visibility';
+        }
+        foreach ($_attributes as $attributeCode) {
             $attributes = $this->_getProductAttribute($attributeCode, ($use_id) ? $productIds : array_keys($productIds), $storeId);
             foreach ($attributes as $productId => $attributeValue) {
                 if(($attributeCode == 'status' && $attributeValue == Mage_Catalog_Model_Product_Status::STATUS_DISABLED)
@@ -113,7 +127,7 @@ extends Mage_Catalog_Model_Resource_Url
      */
     public function getCategories($categoryIds, $storeId)
     {
-        if(!Mage::getStoreConfigFlag(self::XML_PATH_DISABLE_CATEGORIE, $storeId))
+        if($this->_helper()->DoNotUseCategoryPathInProduct($storeId))
         {
             return array();
         }
@@ -135,7 +149,10 @@ extends Mage_Catalog_Model_Resource_Url
     public function saveRewrite($rewriteData, $rewrite)
     {
         parent::saveRewrite($rewriteData, $rewrite);
-        $this->_saveUrlIndexerRewrite($rewriteData, $rewrite);
+        if($this->_helper()->isEnabled())
+        {
+            $this->_saveUrlIndexerRewrite($rewriteData, $rewrite);
+        }
         return $this;
     }
 
@@ -177,5 +194,14 @@ extends Mage_Catalog_Model_Resource_Url
                 }
             }
         }
+    }
+
+    /**
+     * 
+     * @return Loewenstark_UrlIndexer_Helper_Data
+     */
+    protected function _helper()
+    {
+        return Mage::helper('urlindexer');
     }
 }

@@ -10,6 +10,13 @@ Facts
 
 Description
 -----------
+Fixing the following issues in Magento Catalog URL
+ * only index active products
+ * only index visible products
+ * index products without categorie path
+ * endless counter for url with the same url key!
+
+This is a drop-in replacement for the core indexer and [Dnd_PatchIndexer](http://www.dnd.fr/2012/09/magento-patch-how-to-optimize-re-index-processing-time-for-url-rewrite/)
 
 Requirements
 ------------
@@ -25,8 +32,10 @@ Installation Instructions
 
 Uninstallation
 --------------
-1. Remove all extension files from your Magento installation
-2. Drink a beer
+Remove all extension files from your Magento installation (app/code/community/Loewenstark/UrlIndexer)
+```sql
+DROP TABLE urlindexer_url_rewrite
+```
 
 Support
 -------
