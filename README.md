@@ -4,8 +4,7 @@ Insperations by [Dnd_PatchIndexer](http://www.dnd.fr/2012/09/magento-patch-how-t
 
 Facts
 -----
-- At Development, this version realy does not work yet ;-)
-- version: 1.0.0.0
+- version: 1.0.0.1
 - [extension on GitHub](https://github.com/mklooss/Loewenstark_UrlIndexer)
 
 Description
