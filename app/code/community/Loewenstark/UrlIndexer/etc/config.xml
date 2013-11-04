@@ -71,4 +71,15 @@
             </index>
         </dev>
     </default>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Loewenstark_UrlIndexer>
+                    <files>
+                        <default>Loewenstark_UrlIndexer.csv</default>
+                    </files>
+                </Loewenstark_UrlIndexer>
+            </modules>
+        </translate>
+    </adminhtml>
 </config>
