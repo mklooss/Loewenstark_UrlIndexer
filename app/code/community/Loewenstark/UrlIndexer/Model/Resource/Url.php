@@ -58,18 +58,9 @@ extends Mage_Catalog_Model_Resource_Url
     {
         if($this->_helper()->HideDisabledProducts($storeId) || $this->_helper()->HideNotVisibileProducts($storeId))
         {
-            $hasIds = false;
-            if($productIds !== null)
-            {
-                $hasIds = true;
-                $productIds = $this->_checkProducts($productIds, $storeId, true);
-            }
-            if(!$hasIds)
-            {
-                $products = parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
-                $products = $this->_checkProducts($products, $storeId, false);
-                return $products;
-            }
+            $products = parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
+            $products = $this->_checkProducts($products, $storeId, false);
+            return $products;
         }
         return parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
     }
