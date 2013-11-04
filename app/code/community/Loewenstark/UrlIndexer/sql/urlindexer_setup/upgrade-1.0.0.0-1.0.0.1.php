@@ -19,7 +19,7 @@ $conn = $installer->getConnection();
 
 // copy dnd patch config
 $select = $conn->select()
-        ->from($conn->getTableName('core/config_data'), array('path','scope','value','scope_id'))
+        ->from($installer->getTable('core/config_data'), array('path','scope','value','scope_id'))
         ->where('path = ?', '/dev/index/disable')
         ->orWhere('path = ?', '/dev/index/notvisible');
 foreach($conn->fetchAll($select) as $config)
@@ -37,6 +37,6 @@ foreach($conn->fetchAll($select) as $config)
     unset($path);
 }
 // remove dnd patch config
-$conn->delete($conn->getTableName('core/config_data'), "path IN('/dev/index/disable','/dev/index/notvisible')");
+$conn->delete($installer->getTable('core/config_data'), "path IN('/dev/index/disable','/dev/index/notvisible')");
 
 $installer->endSetup();
