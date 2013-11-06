@@ -140,7 +140,7 @@ extends Mage_Catalog_Model_Resource_Url
     public function saveRewrite($rewriteData, $rewrite)
     {
         parent::saveRewrite($rewriteData, $rewrite);
-        if($this->_helper()->OptimizeCategoriesLeftJoin($storeid))
+        if($this->_helper()->OptimizeCategoriesLeftJoin($rewriteData['store_id']))
         {
             $this->_saveUrlIndexerRewrite($rewriteData, $rewrite);
         }
