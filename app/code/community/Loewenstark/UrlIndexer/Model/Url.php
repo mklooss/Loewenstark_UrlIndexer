@@ -38,6 +38,7 @@ extends Mage_Catalog_Model_Url
     }
     
     /**
+     * refresh url rewrites by product ids
      * 
      * @param array $productIds
      * @param null|int $store_id
@@ -48,15 +49,25 @@ extends Mage_Catalog_Model_Url
         $stores = array();
         if(is_null($store_id))
         {
-            $stores = array_keys($this->getStores($store_id));
+            $stores = $this->getStores();
         } else {
-            $stores = array((int)$store_id);
+            $stores = array((int)$store_id => $this->getStores());
         }
-        foreach($stores as $storeId)
+        foreach($stores as $storeId => $store)
         {
+            $storeRootCategoryId = $store->getRootCategoryId();
+            $storeRootCategory = $this->getResource()->getCategory($storeRootCategoryId, $storeId);
             foreach($this->getResource()->getProductsByIds($productIds, $storeId) as $product)
             {
-                parent::refreshProductRewrite($product, $storeId);
+                $categories = $this->getResource()->getCategories($product->getCategoryIds(), $storeId);
+                if(!isset($categories[$storeRootCategoryId]))
+                {
+                    $categories[$storeRootCategoryId] = $storeRootCategory;
+                }
+                foreach($categories as $category)
+                {
+                    $this->_refreshProductRewrite($product, $category);
+                }
             }
         }
         return $this;
