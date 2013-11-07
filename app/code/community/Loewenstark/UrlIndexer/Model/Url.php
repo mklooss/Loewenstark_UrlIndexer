@@ -38,6 +38,31 @@ extends Mage_Catalog_Model_Url
     }
     
     /**
+     * 
+     * @param array $productIds
+     * @param null|int $store_id
+     * @return Loewenstark_UrlIndexer_Model_Url
+     */
+    public function refreshProductRewriteByIds($productIds, $store_id = null)
+    {
+        $stores = array();
+        if(is_null($store_id))
+        {
+            $stores = array_keys($this->getStores($store_id));
+        } else {
+            $stores = array((int)$store_id);
+        }
+        foreach($stores as $storeId)
+        {
+            foreach($this->getResource()->getProductsByIds($productIds, $storeId) as $product)
+            {
+                parent::refreshProductRewrite($product, $storeId);
+            }
+        }
+        return $this;
+    }
+    
+    /**
      * Refresh product rewrite
      *
      * @param Varien_Object $product

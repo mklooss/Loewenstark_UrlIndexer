@@ -45,6 +45,18 @@ extends Mage_Catalog_Model_Resource_Url
     }
     
     /**
+     * get all defined Product Data from array per storeview
+     * 
+     * @param array $ids
+     * @param int $storeId
+     * @return array
+     */
+    public function getProductsByIds($productIds, $storeId)
+    {
+        return $this->_getProducts($productIds, $storeId, 0, 0);
+    }
+    
+    /**
      * Retrieve Product data objects
      * LOE: remove if status(=2) is disabled or visibility(=1) false
      *
@@ -59,52 +71,33 @@ extends Mage_Catalog_Model_Resource_Url
         if($this->_helper()->HideDisabledProducts($storeId) || $this->_helper()->HideNotVisibileProducts($storeId))
         {
             $products = parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
-            $products = $this->_checkProducts($products, $storeId, false);
-            return $products;
-        }
-        return parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
-    }
-    
-    /**
-     * check if products can be disabled
-     * 
-     * @param array $productIds
-     * @param int $storeId
-     * @param bool $are_ids
-     * @return array
-     */
-    protected function _checkProducts(&$productIds, $storeId, $use_id=true)
-    {
-        $_attributes = array();
-        if($this->_helper()->HideDisabledProducts($storeId))
-        {
-            $_attributes[] = 'status';
-        }
-        if($this->_helper()->HideNotVisibileProducts($storeId))
-        {
-            $_attributes[] = 'visibility';
-        }
-        foreach ($_attributes as $attributeCode) {
-            $attributes = $this->_getProductAttribute($attributeCode, ($use_id) ? $productIds : array_keys($productIds), $storeId);
-            foreach ($attributes as $productId => $attributeValue) {
-                if(($attributeCode == 'status' && $attributeValue == Mage_Catalog_Model_Product_Status::STATUS_DISABLED)
-                   ||
-                   ($attributeCode == 'visibility' && $attributeValue == Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE)
-                  )
-                {
-                    $id = $productId;
-                    if($use_id)
+            $_attributes = array();
+            if($this->_helper()->HideDisabledProducts($storeId))
+            {
+                $_attributes[] = 'status';
+            }
+            if($this->_helper()->HideNotVisibileProducts($storeId))
+            {
+                $_attributes[] = 'visibility';
+            }
+            foreach ($_attributes as $attributeCode) {
+                $attributes = $this->_getProductAttribute($attributeCode, array_keys($productIds), $storeId);
+                foreach ($attributes as $productId => $attributeValue) {
+                    if(($attributeCode == 'status' && $attributeValue == Mage_Catalog_Model_Product_Status::STATUS_DISABLED)
+                       ||
+                       ($attributeCode == 'visibility' && $attributeValue == Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE)
+                      )
                     {
-                        $id = array_search($productId, $productIds);
-                    }
-                    if(isset($productIds[$id]))
-                    {
-                        unset($productIds[$id]);
+                        if(isset($productIds[$productId]))
+                        {
+                            unset($productIds[$productId]);
+                        }
                     }
                 }
             }
+            return $products;
         }
-        return $productIds;
+        return parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
     }
 
     /**
