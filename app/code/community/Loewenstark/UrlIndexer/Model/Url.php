@@ -51,7 +51,7 @@ extends Mage_Catalog_Model_Url
         {
             $stores = $this->getStores();
         } else {
-            $stores = array((int)$store_id => $this->getStores());
+            $stores = array((int)$store_id => $this->getStores($store_id));
         }
         foreach($stores as $storeId => $store)
         {
