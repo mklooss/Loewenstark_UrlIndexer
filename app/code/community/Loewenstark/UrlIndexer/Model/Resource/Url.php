@@ -53,7 +53,8 @@ extends Mage_Catalog_Model_Resource_Url
      */
     public function getProductsByIds($productIds, $storeId)
     {
-        return $this->_getProducts($productIds, $storeId, 0, 0);
+		$lastEntityId = 0;
+        return $this->_getProducts($productIds, $storeId, 0, $lastEntityId);
     }
     
     /**
