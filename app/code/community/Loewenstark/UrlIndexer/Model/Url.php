@@ -57,18 +57,27 @@ extends Mage_Catalog_Model_Url
         {
             $storeRootCategoryId = $store->getRootCategoryId();
             $storeRootCategory = $this->getResource()->getCategory($storeRootCategoryId, $storeId);
-            foreach($this->getResource()->getProductsByIds($productIds, $storeId) as $product)
-            {
-                $categories = $this->getResource()->getCategories($product->getCategoryIds(), $storeId);
-                if(!isset($categories[$storeRootCategoryId]))
-                {
-                    $categories[$storeRootCategoryId] = $storeRootCategory;
-                }
-                foreach($categories as $category)
-                {
-                    $this->_refreshProductRewrite($product, $category);
-                }
-            }
+			$process = true;
+			$lastEntityId = 0;
+			while ($process == true) {
+				$products = $this->getResource()->getProductsByIds($productIds, $storeId, $lastEntityId);
+				if (!$products) {
+					$process = false;
+					break;
+				}
+				foreach($products as $product)
+				{
+					$categories = $this->getResource()->getCategories($product->getCategoryIds(), $storeId);
+					if(!isset($categories[$storeRootCategoryId]))
+					{
+						$categories[$storeRootCategoryId] = $storeRootCategory;
+					}
+					foreach($categories as $category)
+					{
+						$this->_refreshProductRewrite($product, $category);
+					}
+				}
+			}
         }
         return $this;
     }

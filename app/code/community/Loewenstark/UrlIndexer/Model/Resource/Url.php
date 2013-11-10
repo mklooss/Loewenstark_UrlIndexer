@@ -11,6 +11,14 @@
 class Loewenstark_UrlIndexer_Model_Resource_Url
 extends Mage_Catalog_Model_Resource_Url
 {
+	
+	/**
+     * Limit products for select
+     *
+     * @var int
+     */
+    protected $_productLimit                = 250;
+
     /**
      * Retrieve categories objects
      * Either $categoryIds or $path (with ending slash) must be specified
@@ -51,10 +59,9 @@ extends Mage_Catalog_Model_Resource_Url
      * @param int $storeId
      * @return array
      */
-    public function getProductsByIds($productIds, $storeId)
+    public function getProductsByIds($productIds, $storeId, &$lastEntityId)
     {
-		$lastEntityId = 0;
-        return $this->_getProducts($productIds, $storeId, 0, $lastEntityId);
+        return $this->_getProducts($productIds, $storeId, $lastEntityId, $lastEntityId);
     }
     
     /**
