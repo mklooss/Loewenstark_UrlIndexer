@@ -11,8 +11,8 @@
 class Loewenstark_UrlIndexer_Model_Resource_Url
 extends Mage_Catalog_Model_Resource_Url
 {
-	
-	/**
+    
+    /**
      * Limit products for select
      *
      * @var int
@@ -76,10 +76,10 @@ extends Mage_Catalog_Model_Resource_Url
      */
     protected function _getProducts($productIds, $storeId, $entityId, &$lastEntityId)
     {
-		if(!is_array($productIds))
-		{
-			$productIds = array($productIds);
-		}
+        if(!is_array($productIds))
+        {
+            $productIds = array($productIds);
+        }
         if($this->_helper()->HideDisabledProducts($storeId) || $this->_helper()->HideNotVisibileProducts($storeId))
         {
             $products = parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
