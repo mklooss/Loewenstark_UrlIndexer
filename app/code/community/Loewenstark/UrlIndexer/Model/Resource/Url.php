@@ -76,7 +76,7 @@ extends Mage_Catalog_Model_Resource_Url
      */
     protected function _getProducts($productIds, $storeId, $entityId, &$lastEntityId)
     {
-        if(!is_array($productIds))
+        if(!is_array($productIds) && !is_null($productIds))
         {
             $productIds = array($productIds);
         }
@@ -93,7 +93,7 @@ extends Mage_Catalog_Model_Resource_Url
                 $_attributes[] = 'visibility';
             }
             foreach ($_attributes as $attributeCode) {
-                $attributes = $this->_getProductAttribute($attributeCode, array_keys($productIds), $storeId);
+                $attributes = $this->_getProductAttribute($attributeCode, array_keys($products), $storeId);
                 foreach ($attributes as $productId => $attributeValue) {
                     if(($attributeCode == 'status' && $attributeValue == Mage_Catalog_Model_Product_Status::STATUS_DISABLED)
                        ||
