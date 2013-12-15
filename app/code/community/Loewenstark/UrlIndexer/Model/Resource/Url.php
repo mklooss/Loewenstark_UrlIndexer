@@ -19,6 +19,14 @@ extends Mage_Catalog_Model_Resource_Url
      */
     protected $_productLimit                = 250;
 
+    protected function _construct() {
+        parent::_construct();
+        Mage::dispatchEvent('urlindexer_construct', array(
+            'model' => $this,
+        ));
+    }
+
+
     /**
      * Retrieve categories objects
      * Either $categoryIds or $path (with ending slash) must be specified
@@ -30,25 +38,6 @@ extends Mage_Catalog_Model_Resource_Url
      */
     protected function _getCategories($categoryIds, $storeId = null, $path = null)
     {
-        if($this->_helper()->HideDisabledCategories($storeId))
-        {
-            $categories = parent::_getCategories($categoryIds, $storeId, $path);
-            if($categories)
-            {
-                $category = end($categories);
-                $attributes = $this->_getCategoryAttribute('is_active', array_keys($categories),
-                    $category->getStoreId());
-                unset($category);
-                foreach ($attributes as $categoryId => $attributeValue) {
-                    if($attributeValue == 0)
-                    {
-                        unset($categories[$categoryId]);
-                    }
-                }
-               unset($attributes);
-            }
-            return $categories;
-        }
         return parent::_getCategories($categoryIds, $storeId, $path);
     }
     
@@ -74,44 +63,182 @@ extends Mage_Catalog_Model_Resource_Url
      * @param int $lastEntityId
      * @return array
      */
+    /**
+     * Retrieve Product data objects
+     *
+     * @param int|array $productIds
+     * @param int $storeId
+     * @param int $entityId
+     * @param int $lastEntityId
+     * @return array
+     */
     protected function _getProducts($productIds, $storeId, $entityId, &$lastEntityId)
     {
-        if(!is_array($productIds) && !is_null($productIds))
-        {
-            $productIds = array($productIds);
+        $products   = array();
+        $websiteId  = Mage::app()->getStore($storeId)->getWebsiteId();
+        $adapter    = $this->_getReadAdapter();
+        if ($productIds !== null) {
+            if (!is_array($productIds)) {
+                $productIds = array($productIds);
+            }
+            sort($productIds); // set right order
         }
-        if($this->_helper()->HideDisabledProducts($storeId) || $this->_helper()->HideNotVisibileProducts($storeId))
-        {
-            $products = parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
-            $_attributes = array();
-            if($this->_helper()->HideDisabledProducts($storeId))
-            {
-                $_attributes[] = 'status';
-            }
-            if($this->_helper()->HideNotVisibileProducts($storeId))
-            {
-                $_attributes[] = 'visibility';
-            }
-            foreach ($_attributes as $attributeCode) {
-                $attributes = $this->_getProductAttribute($attributeCode, array_keys($products), $storeId);
-                foreach ($attributes as $productId => $attributeValue) {
-                    if(($attributeCode == 'status' && $attributeValue == Mage_Catalog_Model_Product_Status::STATUS_DISABLED)
-                       ||
-                       ($attributeCode == 'visibility' && $attributeValue == Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE)
-                      )
-                    {
-                        if(isset($productIds[$productId]))
-                        {
-                            unset($productIds[$productId]);
-                        }
-                    }
-                }
-            }
-            return $products;
+        $bind = array(
+            'website_id' => (int)$websiteId,
+            'entity_id'  => (int)$entityId,
+        );
+        $select = $adapter->select()
+            ->useStraightJoin(true)
+            ->from(array('e' => $this->getTable('catalog/product')), array('entity_id'))
+            ->join(
+                array('w' => $this->getTable('catalog/product_website')),
+                'e.entity_id = w.product_id AND w.website_id = :website_id',
+                array()
+            )
+            ->where('e.entity_id > :entity_id')
+            ->order('e.entity_id')
+            ->limit($this->_productLimit);
+        if ($productIds !== null) {
+            $select->where('e.entity_id IN(?)', $productIds);
         }
-        return parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
-    }
+        
+        unset($productIds, $entityId);
+        
+        $this->_addProductAttributeToSelect($select, 'name', $storeId);
+        $this->_addProductAttributeToSelect($select, 'url_key', $storeId);
+        $this->_addProductAttributeToSelect($select, 'url_path', $storeId);
+        $this->_addProductAttributeStatusToSelect($select, $storeId);
+        $this->_addProductAttributeVisibilityToSelect($select, $storeId);
+        
+        Mage::dispatchEvent('urlindexer_getproducts_select', array(
+            'model' => $this,
+            'select' => $select,
+            'store_id' => $storeId
+        ));
 
+        foreach ($adapter->fetchAll($select, $bind) as $row) {
+            if(isset($row['status'])) {
+                unset($row['status']);
+            }
+            if(isset($row['visibility'])) {
+                unset($row['visibility']);
+            }
+            $product = new Varien_Object($row);
+            $product->setIdFieldName('entity_id');
+            $product->setCategoryIds(array());
+            $product->setStoreId($storeId);
+            $products[$product->getId()] = $product;
+            $lastEntityId = $product->getId();
+        }
+        
+        unset($bind, $select);
+
+        if ($products && !$this->_helper()->DoNotUseCategoryPathInProduct($storeId)) {
+            $select = $adapter->select()
+                ->from(
+                    $this->getTable('catalog/category_product'),
+                    array('product_id', 'category_id')
+                )
+                ->where('product_id IN(?)', array_keys($products));
+            foreach ($adapter->fetchAll($select) as $category) {
+                $productId = $category['product_id'];
+                $categoryIds = $products[$productId]->getCategoryIds();
+                $categoryIds[] = $category['category_id'];
+                $products[$productId]->setCategoryIds($categoryIds);
+            }
+        }
+        return $products;
+    }
+    
+    /**
+     * Retrieve product attribute
+     *
+     * @param string $attributeCode
+     * @param int|array $productIds
+     * @param string $storeId
+     * @return array
+     */
+    public function _addProductAttributeToSelect(Varien_Db_Select $select, $attributeCode, $storeId)
+    {
+        $attributeCode = trim($attributeCode);
+        $storeId = (int)$storeId;
+        $adapter = $this->_getReadAdapter();
+        if (!isset($this->_productAttributes[$attributeCode])) {
+            $attribute = $this->getProductModel()->getResource()->getAttribute($attributeCode);
+
+            $this->_productAttributes[$attributeCode] = array(
+                'entity_type_id' => (int)$attribute->getEntityTypeId(),
+                'attribute_id'   => (int)$attribute->getId(),
+                'table'          => $attribute->getBackend()->getTable(),
+                'is_global'      => (int)$attribute->getIsGlobal()
+            );
+            unset($attribute);
+        }
+        
+        $attributeTable = $this->_productAttributes[$attributeCode]['table'];
+        $attributeId = $this->_productAttributes[$attributeCode]['attribute_id'];
+        
+        if ($this->_productAttributes[$attributeCode]['is_global'] == 1 || $storeId == 0) {
+            $attributeAlias = 'attr_'.$attributeId;
+            $select->joinLeft(
+                    array($attributeAlias => $attributeTable),
+                    'e.entity_id = '.$attributeAlias.'.entity_id AND '.$attributeAlias.'.attribute_id = '.$attributeId.' AND '.$attributeAlias.'.store_id = 0',
+                    array()
+                )->columns(array($attributeCode => $attributeAlias.'.value'));
+        } else {
+            $attributeAlias1 = 'attr_'.$attributeId;
+            $attributeAlias2 = 'attr_'.$attributeId.'_2';
+            $valueExpr = $adapter->getCheckSql($attributeAlias1.'.value_id > 0', $attributeAlias1.'.value', $attributeAlias2.'.value');
+            $select->joinLeft(
+                    array($attributeAlias1 => $attributeTable),
+                    'e.entity_id = '.$attributeAlias1.'.entity_id AND '.$attributeAlias1.'.attribute_id = '.$attributeId.' AND '.$attributeAlias1.'.store_id = '.$storeId,
+                    array()
+                )->joinLeft(
+                    array($attributeAlias2 => $attributeTable),
+                    'e.entity_id = '.$attributeAlias2.'.entity_id AND '.$attributeAlias2.'.attribute_id = '.$attributeId.' AND '.$attributeAlias2.'.store_id = 0',
+                    array()
+                )
+                ->columns(array($attributeCode => $valueExpr));
+        }
+        return $this;
+    }
+    
+    /**
+     * add Status Filter to Select
+     * 
+     * @param Varien_Db_Select $select
+     * @param int $storeId
+     * @return Loewenstark_UrlIndexer_Model_Resource_Url
+     */
+    public function _addProductAttributeStatusToSelect(Varien_Db_Select $select, $storeId)
+    {
+        if($this->_helper()->HideDisabledProducts($storeId))
+        {
+            $this->_addProductAttributeToSelect($select, 'status', $storeId);
+            $select->where('status = ?', Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
+            $select->where('status IS NOT NULL');
+        }
+        return $this;
+    }
+    
+    /**
+     * add Status Filter to Select
+     * 
+     * @param Varien_Db_Select $select
+     * @param int $storeId
+     * @return Loewenstark_UrlIndexer_Model_Resource_Url
+     */
+    public function _addProductAttributeVisibilityToSelect(Varien_Db_Select $select, $storeId)
+    {
+        if($this->_helper()->HideNotVisibileProducts($storeId))
+        {
+            $this->_addProductAttributeToSelect($select, 'visibility', $storeId);
+            $select->where('visibility != ?', Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE);
+            $select->where('visibility IS NOT NULL');
+        }
+        return $this;
+    }
+    
     /**
      * Retrieve categories data objects by their ids. Return only categories that belong to specified store.
      * // LOE: Check Categories, force array output
@@ -192,6 +319,17 @@ extends Mage_Catalog_Model_Resource_Url
         }
     }
 
+    /**
+     * 
+     * @param int $limit
+     * @return Loewenstark_UrlIndexer_Model_Resource_Url
+     */
+    public function setProductLimit($limit)
+    {
+        $this->_productLimit = $limit;
+        return $this;
+    }
+    
     /**
      * 
      * @return Loewenstark_UrlIndexer_Helper_Data
