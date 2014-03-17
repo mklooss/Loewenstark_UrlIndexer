@@ -184,7 +184,7 @@ extends Mage_Catalog_Model_Resource_Url
                         $where['store_id = ?'] = (int)$rewrite->getStoreId();
                     }
                     $adapter->delete(
-                        Mage::getSingleton('core/resource')->getTableName('urlindexer/url_rewrite'),
+                        $this->getTable('urlindexer/url_rewrite'),
                         $where
                     );
                 }
