@@ -20,9 +20,9 @@ extends Mage_Core_Helper_Abstract
     // HideNotVisibileProducts
     const XML_PATH_DISABLED_CATEGORIES = 'dev/index/disable_categories';
     // DoNotUseCategoryPathInProduct
-    const XML_PATH_DISABLE_CATEGORIE = 'catalog/seo_product/use_categories';
+    const XML_PATH_DISABLE_CATEGORIE = 'catalog/seo/product_use_categories';
     // OptimizeCategoriesLeftJoin
-    const XML_PATH_LEFTJOIN_CATEGORIE = 'catalog/seo_product/optimize_categorie_leftjoin';
+    const XML_PATH_LEFTJOIN_CATEGORIE = 'dev/index/optimize_categorie_leftjoin';
     
     /**
      * is Modul enabled
