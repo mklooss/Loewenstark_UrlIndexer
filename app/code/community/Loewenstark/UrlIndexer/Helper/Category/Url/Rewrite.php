@@ -36,7 +36,7 @@ extends Mage_Catalog_Helper_Category_Url_Rewrite
             );
             return $this;
         }
-        return joinTableToEavCollection($collection, $storeId);
+        return parent::joinTableToEavCollection($collection, $storeId);
     }
 
     /**
