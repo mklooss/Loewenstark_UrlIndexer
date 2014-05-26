@@ -80,6 +80,9 @@ extends Mage_Catalog_Model_Resource_Url
         {
             $productIds = array($productIds);
         }
+        
+        if (empty($productIds)) return array(); // Skip on empty $productIds
+        
         if($this->_helper()->HideDisabledProducts($storeId) || $this->_helper()->HideNotVisibileProducts($storeId))
         {
             $products = parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
