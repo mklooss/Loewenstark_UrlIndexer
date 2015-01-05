@@ -1,0 +1,34 @@
+tables:
+  core_url_rewrite:
+    - url_rewrite_id: 1
+      store_id: 1
+      id_path: product/1
+      request_path: awesome-product.html
+      target_path: catalog/product/view/id/1
+      is_system: 1
+    - url_rewrite_id: 2
+      store_id: 1
+      id_path: product/2
+      request_path: awesome-product-3.html
+      target_path: catalog/product/view/id/2
+      is_system: 1
+    - url_rewrite_id: 3
+      store_id: 1
+      id_path: product/3
+      request_path: awesome-product-4.html
+      target_path: catalog/product/view/id/3
+      is_system: 1
+    - url_rewrite_id: 4
+      store_id: 1
+      id_path: 15374200_1419328330
+      request_path: awesome-product-2.html
+      target_path: awesome-product-3.html
+      is_system: 0
+      options: RP
+    - url_rewrite_id: 5
+      store_id: 1
+      id_path: 15374200_1419328331
+      request_path: awesome-product-2-3.html
+      target_path: awesome-product-4.html
+      is_system: 0
+      options: RP
