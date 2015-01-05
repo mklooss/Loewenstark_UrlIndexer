@@ -8,5 +8,22 @@
             "email": "m.klooss@loewenstark.com"
         }
     ],
-    "type": "magento-module"
+    "type": "magento-module",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packages.firegento.com"
+        }
+    ],
+    "require-dev": {
+        "ecomdev/ecomdev_phpunit": "0.3.7",
+        "mikey179/vfsStream": "1.4.0",
+        "ecomdev/mage-ci": "dev-master"
+    },
+    "scripts": {
+        "test": "bin/test.sh $1"
+    },
+    "extra": {
+        "magento-root-dir": "root"
+    }
 }
