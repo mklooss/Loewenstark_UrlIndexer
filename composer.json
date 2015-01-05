@@ -1,0 +1,12 @@
+{
+    "name": "loewenstark/url_indexer",
+    "description": "Fix issues in Magento Catalog URL indexing",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Mathis Klooß",
+            "email": "m.klooss@loewenstark.com"
+        }
+    ],
+    "type": "magento-module"
+}
