@@ -1,0 +1,14 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+
+sudo: false
+
+env:
+  - MAGENTO_VERSION=1.9.1.0
+
+script:
+  - composer test ${MAGENTO_VERSION}

@@ -1,2 +1,6 @@
 /.idea/
 /nbproject/
+/vendor/
+/composer.lock
+/root/
+/magento_*
