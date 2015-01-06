@@ -14,9 +14,9 @@ extends Mage_Core_Helper_Abstract
     // isEnabled
     const XML_PATH_IS_ENABLED = 'dev/index/enable';
     // HideDisabledProducts
-    const XML_PATH_DISABLED_PRODUCTS = 'dev/index/disable';
+    const XML_PATH_DISABLED_PRODUCTS = 'dev/index/disable_products';
     // HideNotVisibileProducts
-    const XML_PATH_HIDE_PRODUCTS = 'dev/index/notvisible';
+    const XML_PATH_HIDE_PRODUCTS = 'dev/index/notvisible_products';
     // HideNotVisibileProducts
     const XML_PATH_DISABLED_CATEGORIES = 'dev/index/disable_categories';
     // DoNotUseCategoryPathInProduct
