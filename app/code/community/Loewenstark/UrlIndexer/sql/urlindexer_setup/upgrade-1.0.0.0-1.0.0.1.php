@@ -19,20 +19,20 @@ $conn = $installer->getConnection();
 
 // copy dnd patch config
 $select = $conn->select()
-	->from($installer->getTable('core/config_data'), array('path', 'scope', 'value', 'scope_id'))
-	->where('path = ?', '/dev/index/disable')
-	->orWhere('path = ?', '/dev/index/notvisible');
+    ->from($installer->getTable('core/config_data'), array('path', 'scope', 'value', 'scope_id'))
+    ->where('path = ?', '/dev/index/disable')
+    ->orWhere('path = ?', '/dev/index/notvisible');
 foreach ($conn->fetchAll($select) as $config) {
-	$path = null;
-	if ($config['path'] == '/dev/index/disable') {
-		$path = '/dev/index/disable_products';
-	} elseif ($config['path'] == '/dev/index/notvisible') {
-		$path = '/dev/index/notvisible_products';
-	} else {
-		continue;
-	}
-	$installer->setConfigData($path, $config['value'], $config['scope'], $config['scopeId']);
-	unset($path);
+    $path = null;
+    if ($config['path'] == '/dev/index/disable') {
+        $path = '/dev/index/disable_products';
+    } elseif ($config['path'] == '/dev/index/notvisible') {
+        $path = '/dev/index/notvisible_products';
+    } else {
+        continue;
+    }
+    $installer->setConfigData($path, $config['value'], $config['scope'], $config['scopeId']);
+    unset($path);
 }
 // remove dnd patch config
 $conn->delete($installer->getTable('core/config_data'), "path IN('/dev/index/disable','/dev/index/notvisible')");
