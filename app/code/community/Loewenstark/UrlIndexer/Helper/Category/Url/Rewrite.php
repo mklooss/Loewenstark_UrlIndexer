@@ -84,9 +84,9 @@ extends Mage_Catalog_Helper_Category_Url_Rewrite
         }
         return parent::joinTableToSelect($select, $storeId);
     }
-    
+
     /**
-     * 
+     *
      * @return Loewenstark_UrlIndexer_Helper_Data
      */
     protected function _helper()

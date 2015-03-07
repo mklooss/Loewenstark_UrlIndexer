@@ -16,8 +16,8 @@
             <active>true</active>
             <codePool>community</codePool>
             <conflicts>
-                <Dnd_Patchindexurl />
-                <EcomDev_UrlRewrite />
+                <Dnd_Patchindexurl/>
+                <EcomDev_UrlRewrite/>
             </conflicts>
         </Loewenstark_UrlIndexer>
     </modules>
