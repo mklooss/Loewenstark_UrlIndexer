@@ -52,6 +52,12 @@ Unit tests use [EcomdevPHPUnit](https://github.com/EcomDev/EcomDev_PHPUnit) and 
 composer run test 1.9.1.0
 ```
 
+The above command supposes you have a MySQL database with a "root" user without password. You can customize MySQL user and password using additional command parameters:
+
+```bash
+composer run test 1.9.1.0 another-user a-secure-password
+```
+
 Developer
 ---------
 Mathis Klooß

@@ -21,7 +21,7 @@
         "ecomdev/mage-ci": "dev-master"
     },
     "scripts": {
-        "test": "bin/test.sh $1"
+        "test": "bin/test.sh $1 $2 $3"
     },
     "extra": {
         "magento-root-dir": "root"
