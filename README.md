@@ -24,7 +24,7 @@ Requirements
 
 Compatibility
 -------------
-- Magento >= 1.7
+- Magento >= 1.8
 
 Installation Instructions
 -------------------------
