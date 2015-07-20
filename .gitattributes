@@ -1,0 +1,24 @@
+# Set default behaviour, in case users don't have core.autocrlf set.
+* text eolf=lf
+*.sln text eol=crlf
+*.eot binary
+*.otf binary
+*.woff binary
+*.ttf binary
+*.gif binary
+*.png binary
+*.jpg binary
+*.tar binary
+*.xz binary
+*.gz binary
+*.zip binary
+*.bz2 binary
+*.dll binary
+*.php eolf=lf
+*.phtml eolf=lf
+*.xml eolf=lf
+*.css eolf=lf
+*.less eolf=lf
+*.js eolf=lf
+*.txt eolf=lf
+*.pdf binary
