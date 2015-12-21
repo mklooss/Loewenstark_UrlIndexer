@@ -94,8 +94,8 @@ class Loewenstark_UrlIndexer_Model_Resource_Url
 						||
 						($attributeCode == 'visibility' && $attributeValue == Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE)
 					) {
-						if (isset($productIds[$productId])) {
-							unset($productIds[$productId]);
+						if (isset($products[$productId])) {
+							unset($products[$productId]);
 						}
 					}
 				}
