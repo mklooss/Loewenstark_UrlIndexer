@@ -112,7 +112,6 @@ class Loewenstark_UrlIndexer_Model_Resource_Url
 			// It may left products to process even if this products is empty
 			if (!$products) {
 				return true;
-
 			}
 			
 			return $products;
