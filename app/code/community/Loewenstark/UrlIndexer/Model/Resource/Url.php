@@ -80,6 +80,12 @@ class Loewenstark_UrlIndexer_Model_Resource_Url
 
 		if ($this->_helper()->HideDisabledProducts($storeId) || $this->_helper()->HideNotVisibileProducts($storeId)) {
 			$products = parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
+			// Cf \Mage_Catalog_Model_Url::refreshProductRewrites
+			// Stop process if no more products are available
+			if (empty($products)) {
+				return false;
+			}
+			
 			$_attributes = array();
 			if ($this->_helper()->HideDisabledProducts($storeId)) {
 				$_attributes[] = 'status';
@@ -100,6 +106,15 @@ class Loewenstark_UrlIndexer_Model_Resource_Url
 					}
 				}
 			}
+			
+			// Cf \Mage_Catalog_Model_Url::refreshProductRewrites
+			// Do not stop process if our filter return no products
+			// It may left products to process even if this products is empty
+			if (!$products) {
+				return true;
+
+			}
+			
 			return $products;
 		}
 		return parent::_getProducts($productIds, $storeId, $entityId, $lastEntityId);
