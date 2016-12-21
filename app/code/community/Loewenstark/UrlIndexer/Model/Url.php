@@ -105,7 +105,7 @@ class Loewenstark_UrlIndexer_Model_Url
 	 */
 	protected function _refreshCategoryProductRewrites(Varien_Object $category)
 	{
-		if ($this->_helper()->DoNotUseCategoryPathInProduct($category->getStoreId())) {
+		if (! $this->_helper()->DoNotUseCategoryPathInProduct($category->getStoreId())) {
 			return parent::_refreshCategoryProductRewrites($category);
 		}
 		return $this;
