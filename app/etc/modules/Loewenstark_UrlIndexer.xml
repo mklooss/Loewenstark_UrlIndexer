@@ -11,14 +11,14 @@
   */
 -->
 <config>
-	<modules>
-		<Loewenstark_UrlIndexer>
-			<active>true</active>
-			<codePool>community</codePool>
-			<conflicts>
-				<Dnd_Patchindexurl/>
-				<EcomDev_UrlRewrite/>
-			</conflicts>
-		</Loewenstark_UrlIndexer>
-	</modules>
+    <modules>
+        <Loewenstark_UrlIndexer>
+            <active>true</active>
+            <codePool>community</codePool>
+            <conflicts>
+                <Dnd_Patchindexurl/>
+                <EcomDev_UrlRewrite/>
+            </conflicts>
+        </Loewenstark_UrlIndexer>
+    </modules>
 </config>
