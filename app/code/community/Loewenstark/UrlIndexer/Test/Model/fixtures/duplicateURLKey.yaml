@@ -1,0 +1,26 @@
+eav:
+  catalog_product:
+    - entity_id: 1
+      type_id: simple
+      sku: product-1
+      name: Product 1
+      url_key: awesome-product
+      attribute_set_id: 1
+      website_ids:
+        - base
+    - entity_id: 2
+      type_id: simple
+      sku: product-2
+      name: Product 2
+      url_key: awesome-product
+      attribute_set_id: 1
+      website_ids:
+        - base
+    - entity_id: 3
+      type_id: simple
+      sku: product-3
+      name: Product 3
+      url_key: awesome-product-2
+      attribute_set_id: 1
+      website_ids:
+        - base

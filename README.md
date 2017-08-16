@@ -44,6 +44,20 @@ Contribution
 ------------
 Any contribution is highly appreciated. The best way to contribute code is to open a [pull request on GitHub](https://help.github.com/articles/using-pull-requests).
 
+### Unit testing
+
+Unit tests use [EcomdevPHPUnit](https://github.com/EcomDev/EcomDev_PHPUnit) and [mage-ci](https://github.com/EcomDev/MageCI) and can be runned with `composer run test MAGENTO_VERSION`, for example:
+
+```bash
+composer run test 1.9.1.0
+```
+
+The above command supposes you have a MySQL database with a "root" user without password. You can customize MySQL user and password using additional command parameters:
+
+```bash
+composer run test 1.9.1.0 another-user a-secure-password
+```
+
 Developer
 ---------
 Mathis Klooß
